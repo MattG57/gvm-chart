@@ -1,4 +1,5 @@
-env_vars.sh
-charts/*.tgz
+# .gitignore
+charts/*
 .DS_Store
 *.lock
+env_vars.sh
