@@ -1,0 +1,4 @@
+apiVersion: v2
+name: value-app-chart
+description: Helm chart for GitHub Value App
+version: 0.1.0

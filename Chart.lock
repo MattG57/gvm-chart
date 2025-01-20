@@ -1,0 +1,9 @@
+dependencies:
+- name: mongodb
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.4.1
+- name: value-app-chart
+  repository: file://value-app-chart
+  version: 0.1.0
+digest: sha256:d98bae6ac242f2668f5e3fdc885f601465eed2da17c10ea81941f52ba32cc599
+generated: "2025-01-18T19:59:45.690107-05:00"

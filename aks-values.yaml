@@ -1,0 +1,180 @@
+# Global configuration
+global:
+  mongodb:
+    uri: ""
+
+# MongoDB configuration
+mongodb:
+  auth:
+    enabled: true
+    rootPassword: ""
+    replicaSetKey: "" # Will be auto-generated if not specified
+
+  # Architecture config
+  architecture: standalone  # Can be 'standalone' or 'replicaset'
+  replicaCount: 3  # Number of secondary nodes (not counting primary)
+  mongodbExtraFlags:
+    - "--wiredTigerCacheSizeGB=1"
+
+  primary:
+    persistence:
+      storageClass: "managed-csi"
+  secondary:
+    persistence:
+      storageClass: "managed-csi"
+
+  # Metrics/Monitoring
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false  # Enable if using Prometheus Operator
+
+  # Service configuration
+  service:
+    type: LoadBalancer
+    port: 27017
+
+  # Pod Disruption Budget
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+  persistence:
+    enabled: true
+    size: 8Gi  
+
+  # Affinity/Anti-affinity rules
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: mongodb
+              app.kubernetes.io/instance: my-release
+          topologyKey: kubernetes.io/hostname
+
+  # Network Policy
+  networkPolicy:
+    enabled: true
+
+  # Init containers for volume permissions
+  volumePermissions:
+    enabled: true
+
+  # Backup configuration (if using Velero or other backup solutions)
+  backup:
+    enabled: false
+
+  # RBAC configuration
+  rbac:
+    create: true
+
+  externalAccess:
+    enabled: true
+    service:
+      type: LoadBalancer
+      port: 27017
+      loadBalancerIPs: []
+    autoDiscovery:
+      enabled: true
+
+  # Value App Chart Configuration
+value-app-chart:
+  name: github-value-chart
+  version: 0.1.0
+  appVersion: 0.1
+  deployment:
+  kubernetesEnvironment: aks  # Possible values: gke, dockerdesktop, openshift, aks 
+
+  # General settings
+  replicaCount: 1  # Number of replicas for the Deployment
+  namespace: default  # Kubernetes namespace where the Deployment will be created
+
+  # Primary application container (frontend/backend)
+  app:
+    image:
+      repository: mgunter/github-value-amd10
+      tag: "latest"
+      pullPolicy: IfNotPresent
+    name: github-value
+    volumes:
+      - name: config-volume
+        configMap:
+          name: github-value-config
+      - name: working-volume
+        emptyDir: {}
+    volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+      - name: working-volume
+        mountPath: /app/backend/logs
+    configKey: config-value
+    config:
+      PORT: 8080
+      BASE_URL: http://localhost:80
+      GITHUB_APP_ID: "1053289"
+    resources:
+      requests:
+        cpu: "4"
+        memory: "6Gi"
+      limits:
+        cpu: "8"
+        memory: "10Gi"
+
+  # Sidecar container settings
+  poller:
+    enabled: true
+    name: "mongodb-poller"
+    image: busybox
+    command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
+    resources:
+      requests:
+        cpu: "1"
+        memory: "2Gi"
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+
+   # Service configuration
+  service:
+    type: LoadBalancer
+    protocol: TCP
+    port: 80
+    targetPort: 8080 # must match PORT config value
+    nodePort: 30080
+
+  # MongoDB connection settings
+  mongodb:
+    service:
+      name: gvm-release-mongodb
+
+  # Service Account configuration
+  serviceAccount:
+    create: true
+    name: custom-sa-name
+    automount: true
+    annotations:
+      example-annotation: value
+
+  # Ingress configuration
+  ingress:
+    enabled: false
+    annotations: {}
+    hosts:
+      - host: example.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls: []
+
+  securityContext:
+    runAsGroup: 1001
+    runAsUser: 0    
+
+  # Pod Security Context
+  podSecurityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsUser: 0  

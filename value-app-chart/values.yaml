@@ -1,0 +1,84 @@
+name: github-value-chart
+version: 0.1.0
+appVersion: 0.1
+deployment: {}
+kubernetesEnvironment: dockerdesktop  # Possible values: gke, dockerdesktop, openshift, aks
+global:
+  mongodb:
+    uri: "mongodb://github-value-and-mongo-mongodb:27017"
+
+# General settings
+replicaCount: 1  # Number of replicas for the Deployment
+namespace: default  # Kubernetes namespace where the Deployment will be created
+
+# Primary application container (frontend/backend)
+app:
+  image:
+    repository: mgunter/github-value-amd10
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  name: github-value
+  volumes:
+    - name: config-volume
+      configMap:
+        name: github-value-config
+    - name: working-volume
+      emptyDir: {}
+  volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+    - name: working-volume
+      mountPath: /var/lib/app
+  configKey: config-value
+  config:
+    PORT: 8080
+    BASE_URL: http://localhost:80
+    GITHUB_APP_ID: "1053289"
+  resources:
+    requests:
+      cpu: "4"
+      memory: "6Gi"
+    limits:
+      cpu: "8"
+      memory: "10Gi"
+
+# Sidecar container settings
+  poller:
+    enabled: true
+    name: "mongodb-poller"
+    image: busybox
+    command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
+    resources:
+      requests:
+        cpu: "1"
+        memory: "2Gi"
+      limits:
+        cpu: "2"
+        memory: "4Gi"
+
+# Service configuration
+service:
+  type: LoadBalancer
+  protocol: TCP
+  port: 80
+  targetPort: 8080
+  nodePort: 30080
+
+# MongoDB connection settings
+mongodb:
+  service:
+    name: github-value-and-mongo-mongodb
+
+# Service Account configuration
+serviceAccount:
+  create: true
+  name: custom-sa-name
+  automount: true
+  annotations:
+    example-annotation: value
+
+
+  securityContext:
+    fsGroup: 1001
+    runAsGroup: 1001
+    runAsUser: 1001    

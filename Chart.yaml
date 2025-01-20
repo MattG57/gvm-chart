@@ -1,0 +1,11 @@
+apiVersion: v2
+name: github-value-and-mongo
+description: Helm chart for GitHub Value Calculator with MongoDB
+version: 0.1.0
+dependencies:
+  - name: mongodb
+    version: "16.4.1"
+    repository: "https://charts.bitnami.com/bitnami"
+  - name: value-app-chart
+    version: "0.1.0"
+    repository: "file://value-app-chart"

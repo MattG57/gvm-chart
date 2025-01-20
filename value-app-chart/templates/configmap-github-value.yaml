@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: github-value-config
+  namespace: {{ .Values.namespace }}
+data:
+  BASE_URL: {{ .Values.app.config.BASE_URL | quote }}
+  PORT: {{ .Values.app.config.PORT | quote }}
+  GITHUB_APP_ID: {{ .Values.app.config.GITHUB_APP_ID | quote }}

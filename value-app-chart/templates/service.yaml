@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "value-app-chart.fullname" . }}
+  labels:
+    {{- include "value-app-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: {{ .Values.service.protocol }}
+      nodePort: {{ .Values.service.nodePort }}
+      name: my-github-value-port
+  selector:
+    {{- include "value-app-chart.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "value-app-chart.fullname" . }}
+  labels:
+    {{- include "value-app-chart.labels" . | nindent 4 }}
+    component: app
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "value-app-chart.selectorLabels" . | nindent 6 }}
+      component: app
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "value-app-chart.labels" . | nindent 8 }}
+        component: app
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "value-app-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.poller.enabled }}
+      initContainers:
+        - name: {{ .Values.poller.name | default "mongodb-poller" }}
+          image: {{ .Values.poller.image }}
+          imagePullPolicy: {{ .Values.poller.imagePullPolicy }}
+          resources:
+            requests:
+              memory: {{ .Values.poller.resources.requests.memory }}
+              cpu: {{ .Values.poller.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.poller.resources.limits.memory }}
+              cpu: {{ .Values.poller.resources.limits.cpu }}
+          command:
+            {{- toYaml .Values.poller.command | nindent 12 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          {{- with .Values.app.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.app.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- toYaml .Values.app.volumeMounts | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: github-value-config
+            - secretRef:
+                name: github-value-secret
+      volumes:
+        {{- toYaml .Values.app.volumes | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
