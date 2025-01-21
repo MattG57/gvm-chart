@@ -18,8 +18,13 @@ RUN git clone -b mongoose https://github.com/austenstone/github-value .
 
 # Install diagnostic utilities
 RUN apt-get update && apt-get install -y net-tools iputils-ping
-RUN apt-get update && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y default-mysql-client
+RUN apt-get update && apt-get install -y gosu \
+    && rm -rf /var/lib/apt/lists/*
 
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Install backend dependencies
 WORKDIR /app/backend
@@ -34,4 +39,9 @@ RUN chown -R appuser:appgroup /app
 
 # Switch to the non-root user
 WORKDIR /app/backend
-CMD node dist/index.js | ./node_modules/.bin/bunyan
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Run the application
+# CMD [ "npm", "start" ]
+# CMD node dist/index.js | ./node_modules/.bin/bunyan

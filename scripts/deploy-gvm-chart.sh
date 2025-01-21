@@ -74,7 +74,6 @@ fi
 
 # Encode values
 ENCODED_PASSWORD=$(url_encode "$MONGODB_ROOT_PASSWORD")
-PRIVATE_KEY_B64=$(cat "$PRIVATE_KEY_FILE" | base64 | tr -d '\n')
 WEBHOOK_SECRET_B64=$(echo -n "$WEBHOOK_SECRET" | base64 | tr -d '\n')
 
 # Construct MongoDB URI
@@ -111,8 +110,8 @@ fi
 # Create Kubernetes Secret
 kubectl create secret generic github-value-secret \
   --from-literal=MONGODB_URI="$MONGODB_URI" \
-  --from-literal=GITHUB_APP_PRIVATE_KEY="$PRIVATE_KEY_B64" \
-  --from-literal=GITHUB_WEBHOOK_SECRET="$WEBHOOK_SECRET_B64" \
+  --from-file=GITHUB_APP_PRIVATE_KEY="$PRIVATE_KEY_FILE" \
+  --from-literal=GITHUB_WEBHOOK_SECRET="$WEBHOOK_SECRET" \
   --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
 # Deploy MongoDB with Helm

@@ -12,7 +12,7 @@ mongodb:
 
   # Architecture config
   architecture: standalone  # Can be 'standalone' or 'replicaset'
-  replicaCount: 3  # Number of secondary nodes (not counting primary)
+  replicaCount: 1  # Number of secondary nodes (not counting primary)
   mongodbExtraFlags:
     - "--wiredTigerCacheSizeGB=1"
 
@@ -95,10 +95,11 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-amd10
+      repository: mgunter/github-value-amd14
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
+      command: ["sh", "-c", "cd /app/backend && npm run start"]
     volumes:
       - name: config-volume
         configMap:
