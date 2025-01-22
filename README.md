@@ -1,55 +1,74 @@
 # GitHub Value and MongoDB Chart
 
-This Helm chart deploys the GitHub Value tracking application with MongoDB using Bitnami's MongoDB chart as a dependency.
+This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
 
 ## Prerequisites
-- Kubernetes cluster (AKS, GKE, or other)
-- Helm 3.x installed
-- kubectl configured with cluster access
+- A Kubernetes cluster (AKS, GKE, etc.).
+- Helm 3.x installed and configured.
+- kubectl configured with cluster access.
 
-# Repository Structure
+## Repository Structure
 ```
-github-value-and-mongo-chart/
-├── Chart.yaml
-├── aks-values.yaml        # AKS-specific values
-├── gke-values.yaml        # GKE-specific values
-├── scripts/              # Common scripts for both environments
-│   ├── config-replica-endpts.sh
-│   ├── deploy-mongo.sh
+.
+├── Chart.yaml # umbrella/parent chart
+├── README.md
+├── aks-values.yaml
+├── gke-values.yaml
+├── build/
+│   ├── Dockerfile
+│   ├── build.sh  # builds the docker image for the app 
+│   └── entrypoint.sh
+├── env_vars.sh    #temporary storage of secrets when testing, is not tracked by github
+├── operational-notes.md
+├── scripts/
+│   ├── config-replica-endpts.sh  # necessary when deploying mongodb as a replicaset
+│   ├── manage-gvm-chart.sh       (active script for install/upgrade)
 │   ├── mongodb-external-service.yaml
-│   ├── reconfig.js
-│   └── setup-helm.sh
-└── README.md
+│   ├── reconfig.js   # example input to the config-replica-endpts.sh script
+│   ├── setup-helm.sh
+└── value-app-chart/
+    ├── Chart.yaml  #child/app chart
+    ├── templates/
+    │   ├── _helpers.tpl
+    │   ├── app-deployment.yaml
+    │   ├── configmap-github-value.yaml
+    │   ├── service.yaml
+    │   └── serviceaccount.yaml
+    └── values.yaml
 ```
 
-
-## Installation
-
-
-Initialize Helm and add repositories
+## Setting Up Helm
+Before deploying, initialize Helm and add any required repositories:
+```bash
 ./scripts/setup-helm.sh
+```
 
-## For GKE Deployment (Uses standard storage class)
-``` ./scripts/deploy-mongo.sh gke-values.yaml ```
+## Using the Manage Script
+Use the “manage-gvm-chart.sh” script to install or upgrade the chart. This script will also prompt for required environment variables.
 
-## For AKS Deployment (Uses managed-csi storage class, and optionally, an external loadbalancer)
-``` ./scripts/deploy-mongo.sh aks-values.yaml ```
-- [Optional: modify the mongodb-external-service.yaml to include the client side ip addresses for any external mongodb client applications.]
-  
-``` kubetl apply -f ./scripts/mongodb-external-service.yaml ```
+Syntax:
+```bash
+./scripts/manage-gvm-chart.sh <install|upgrade> <values-file> <parent|child> [namespace]
+```
+Example for installing the parent (umbrella) chart using GKE values:
+```bash
+./scripts/manage-gvm-chart.sh install gke-values.yaml parent
+```
+Or upgrading the child chart for AKS in a custom namespace:
+```bash
+./scripts/manage-gvm-chart.sh upgrade aks-values.yaml child my-namespace
+```
+By default, the namespace is “default.”
 
-## Post install Configuration
-``` kubectl get services ```
-- [based on the listed external ip addresses create the reconfig.js file.]
-  
-``` ./config-replica-endpts.sh ```
-- This Configures the MongoDB replica set to use external LoadBalancer endpoints in client-side urls.
+## Additional MongoDB Configuration
+• config-replica-endpts.sh reconfigures the MongoDB replica set with external endpoints when using a LoadBalancer.  
+• mongodb-external-service.yaml can be applied to expose MongoDB externally for certain use cases.
 
-## Scripts
-``` ./config-replica-endpts.sh ```
-- Configures the MongoDB replica set to use external LoadBalancer endpoints for communication.
+## Legacy Scripts
+• deploy-gvm-chart.sh and upgrade-gvm-chart.sh are deprecated. Use manage-gvm-chart.sh instead.
 
-``` ./setup-helm.sh ```
-- Initializes Helm and adds required chart repositories.
-### License
+## Operational Guidance
+. The operational-notes.md file describes critical operational considerations for PVs, Backup, and data lifecycle customization options.
+
+## License
 MIT

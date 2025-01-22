@@ -10,7 +10,7 @@ read -r DOCKER_USERNAME
 echo "Enter your Docker Hub password:"
 read -s DOCKER_PASSWORD  # Use -s to hide the password input
 
-DOCKER_IMAGE="github-value-amd15"            # Docker image name
+DOCKER_IMAGE="github-value-mongodb"            # Docker image name
 DOCKER_TAG="latest"                    # Docker image tag
 REGISTRY="mgunter"                     # Container registry (Docker Hub username or org)
 
@@ -25,6 +25,7 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 # Build and push the multi-architecture image
 echo "Building and pushing multi-architecture Docker image..."
 docker buildx build \
+  --no-cache \
   --platform linux/amd64,linux/arm64 \
   -t "$REGISTRY/$DOCKER_IMAGE:$DOCKER_TAG" \
   --push .

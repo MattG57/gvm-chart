@@ -86,7 +86,7 @@ value-app-chart:
   version: 0.1.0
   appVersion: 0.1
   deployment:
-  kubernetesEnvironment: aks  # Possible values: gke, dockerdesktop, openshift, aks 
+  kubernetesEnvironment: aks  # Possible values: gke, dockerdesktop, openshift, aks
 
   # General settings
   replicaCount: 1  # Number of replicas for the Deployment
@@ -95,11 +95,14 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-amd14
+      repository: mgunter/github-value-mongodb
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
-      command: ["sh", "-c", "cd /app/backend && npm run start"]
+    command:
+      - "sh"
+      - "-c"
+      - "cd /app/backend && npm run start"
     volumes:
       - name: config-volume
         configMap:
@@ -137,6 +140,10 @@ value-app-chart:
       limits:
         cpu: "2"
         memory: "4Gi"
+  
+  autoscaling:
+    enabled: true
+    minReplicas: 1
 
    # Service configuration
   service:

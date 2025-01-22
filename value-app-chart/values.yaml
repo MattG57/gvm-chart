@@ -2,7 +2,7 @@ name: github-value-chart
 version: 0.1.0
 appVersion: 0.1
 deployment: {}
-kubernetesEnvironment: dockerdesktop  # Possible values: gke, dockerdesktop, openshift, aks
+kubernetesEnvironment: gke  # Possible values: gke, dockerdesktop, openshift, aks
 global:
   mongodb:
     uri: "mongodb://github-value-and-mongo-mongodb:27017"
@@ -14,7 +14,7 @@ namespace: default  # Kubernetes namespace where the Deployment will be created
 # Primary application container (frontend/backend)
 app:
   image:
-    repository: mgunter/github-value-amd10
+    repository: mgunter/github-value-mongodb
     tag: "latest"
     pullPolicy: IfNotPresent
   name: github-value
@@ -43,18 +43,23 @@ app:
       memory: "10Gi"
 
 # Sidecar container settings
-  poller:
-    enabled: true
-    name: "mongodb-poller"
-    image: busybox
-    command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
-    resources:
-      requests:
-        cpu: "1"
-        memory: "2Gi"
-      limits:
-        cpu: "2"
-        memory: "4Gi"
+poller:
+  enabled: true
+  name: "mongodb-poller"
+  image: busybox
+  command: ["sh", "-c", "until nc -zv IP_OF_MONGODB 27017; do echo 'waiting for mongodb'; sleep 5; done"] # Replace IP_OF_MONGODB with the actual IP address/hostname of the MongoDB service
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+
+# Autoscaling settings
+autoscaling:
+  enabled: true
+  minReplicas: 1   
 
 # Service configuration
 service:
