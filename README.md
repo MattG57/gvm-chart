@@ -67,9 +67,6 @@ The manage-gvm-chart.sh script prompts for sensitive information (e.g., MONGODB_
 • config-replica-endpts.sh reconfigures the MongoDB replica set with external endpoints when using a LoadBalancer.  
 • mongodb-external-service.yaml can be applied to expose MongoDB externally for certain use cases.
 
-## Legacy Scripts
-• deploy-gvm-chart.sh and upgrade-gvm-chart.sh are deprecated. Use manage-gvm-chart.sh instead.
-
 ## Operational Guidance
 . The operational-notes.md file describes critical operational considerations for PVs, Backup, and data lifecycle customization options.
 
