@@ -60,6 +60,9 @@ Or upgrading the child chart for AKS in a custom namespace:
 ```
 By default, the namespace is “default.”
 
+## Configuration & Secrets
+The manage-gvm-chart.sh script prompts for sensitive information (e.g., MONGODB_ROOT_PASSWORD, private keys) so that they are never stored directly in the values.yaml file. Non-sensitive configurations such as application ID, port numbers, and basic environment-specific settings remain in the chart's values.yaml files.
+
 ## Additional MongoDB Configuration
 • config-replica-endpts.sh reconfigures the MongoDB replica set with external endpoints when using a LoadBalancer.  
 • mongodb-external-service.yaml can be applied to expose MongoDB externally for certain use cases.
