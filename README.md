@@ -1,4 +1,4 @@
-# GitHub Value and MongoDB Chart
+# GitHub Value and MongoDB Chart (beta releasa)
 
 This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
 
