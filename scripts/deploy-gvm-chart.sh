@@ -12,20 +12,14 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 CHART_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Check if the values file argument is provided
-if [ $# -lt 3 ]; then
-    echo "Error: Missing required arguments <install|upgrade> <values-file> <parent|child> [namespace]"
-    echo "Usage: ./manage-gvm-chart.sh <install|upgrade> <values-file> <parent|child> [namespace]"
+if [ $# -ne 1 ]; then
+    echo "Error: Missing required argument <values-file>"
+    echo "Usage: ./deploy-gvm-chart.sh <values-file>"
+    echo "Example: ./deploy-gvm-chart.sh aks-values.yaml"
     exit 1
 fi
 
-ACTION="$1"        # install or upgrade
-VALUES_ARG="$2"    # values file
-CHART_TYPE="$3"    # parent or child
-
-# Default NAMESPACE to 'default' if not supplied
-NAMESPACE="${4:-default}"
-
-VALUES_FILE="$CHART_DIR/$VALUES_ARG"
+VALUES_FILE="$CHART_DIR/$1"
 
 # Check if the values file exists
 if [ ! -f "$VALUES_FILE" ]; then
@@ -76,6 +70,8 @@ if [ -z "$WEBHOOK_SECRET" ]; then
     fi
 fi
 
+
+
 # Encode values
 ENCODED_PASSWORD=$(url_encode "$MONGODB_ROOT_PASSWORD")
 WEBHOOK_SECRET_B64=$(echo -n "$WEBHOOK_SECRET" | base64 | tr -d '\n')
@@ -84,7 +80,6 @@ WEBHOOK_SECRET_B64=$(echo -n "$WEBHOOK_SECRET" | base64 | tr -d '\n')
 MONGODB_URI="mongodb://root:${ENCODED_PASSWORD}@gvm-release-mongodb:27017/"
 
 MONGODB_URI_B64=$(echo -n "$MONGODB_URI" | base64 | tr -d '\n')
-
 # Prompt to export variables for testing
 read -p "Do you want to save these variables to env_vars.sh? [y/N]: " export_choice
 if [[ "$export_choice" =~ ^[Yy]$ ]]; then
@@ -111,30 +106,15 @@ else
   echo "Environment variables not exported."
 fi
 
+
 # Create Kubernetes Secret
 kubectl create secret generic github-value-secret \
   --from-literal=MONGODB_URI="$MONGODB_URI" \
   --from-file=GITHUB_APP_PRIVATE_KEY="$PRIVATE_KEY_FILE" \
   --from-literal=GITHUB_WEBHOOK_SECRET="$WEBHOOK_SECRET" \
-  --namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+  --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
-# Choose which chart to operate on
-if [ "$CHART_TYPE" == "parent" ]; then
-    TARGET_CHART_DIR="$CHART_DIR"
-else
-    TARGET_CHART_DIR="$CHART_DIR/value-app-chart"
-fi
+# Deploy MongoDB with Helm
+helm install gvm-release "$CHART_DIR" -f "$VALUES_FILE" -n default --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD" #--dry-run --debug
 
-# Helm action
-if [ "$ACTION" == "install" ]; then
-    helm install gvm-release "$TARGET_CHART_DIR" -f "$VALUES_FILE" -n "$NAMESPACE"  \
-        --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD"
-elif [ "$ACTION" == "upgrade" ]; then
-    helm upgrade gvm-release "$TARGET_CHART_DIR" -f "$VALUES_FILE" -n "$NAMESPACE" \
-        --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD"
-else
-    echo "Invalid action: $ACTION"
-    exit 1
-fi
-
-echo "Action '$ACTION' completed on $CHART_TYPE chart with values from $VALUES_FILE in the $NAMESPACE namespace."
+echo " github-value-secret created in defaut Namespace,  $CHART_DIR gvm-release initiated"

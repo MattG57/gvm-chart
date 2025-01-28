@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y git && apt-get clean
 
 #CHANGE BACK --RUN git clone https://github.com/austenstone/github-value .
 RUN git clone -b mongoose https://github.com/austenstone/github-value .
+# COPY github-value/* /app/
 
 # Install diagnostic utilities
 RUN apt-get update && apt-get install -y net-tools iputils-ping

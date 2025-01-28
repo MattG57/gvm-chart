@@ -10,7 +10,7 @@ read -r DOCKER_USERNAME
 echo "Enter your Docker Hub password:"
 read -s DOCKER_PASSWORD  # Use -s to hide the password input
 
-DOCKER_IMAGE="github-value-mongodb"            # Docker image name
+DOCKER_IMAGE="github-value-mongodb2"            # Docker image name
 DOCKER_TAG="latest"                    # Docker image tag
 REGISTRY="mgunter"                     # Container registry (Docker Hub username or org)
 
