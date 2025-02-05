@@ -1,4 +1,4 @@
-# Global configuration
+# Global configuration #note: may need to specify architecture when moving images to private registry (e.g. podman pull docker.io/mgunter/github-value-mongodb:latest --arch=amd64)
 global:
   mongodb:
     uri: ""
@@ -97,11 +97,12 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb1
+      repository: mgunter/github-value-mongodb10
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
     command: ["sh", "-c", "cd /app/backend && npm run start"]
+    #  command: ["sh", "-c", "sleep infinity"]
     volumes:
       - name: config-volume
         configMap:
@@ -117,7 +118,7 @@ value-app-chart:
     config:
       PORT: 8080
       BASE_URL: http://localhost:80
-      GITHUB_APP_ID: "1053289"
+      GITHUB_APP_ID: "1067681"
     resources:
       requests:
         cpu: "4"

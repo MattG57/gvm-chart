@@ -1,5 +1,5 @@
-# Use Node.js 18 as the base image
-FROM node:20-bullseye
+FROM node:22-slim
+
 
 RUN groupadd -g 1001 appgroup && \
     useradd -r -u 1001 -g appgroup appuser
@@ -13,9 +13,8 @@ RUN apt-get update && apt-get install -y git && apt-get clean
 
 # Clone the repository
 
-#CHANGE BACK --RUN git clone https://github.com/austenstone/github-value .
-RUN git clone -b mongoose https://github.com/austenstone/github-value .
-# COPY github-value/* /app/
+RUN git clone https://github.com/austenstone/github-value .
+# RUN git clone -b mongoose https://github.com/austenstone/github-value .
 
 # Install diagnostic utilities
 RUN apt-get update && apt-get install -y net-tools iputils-ping
