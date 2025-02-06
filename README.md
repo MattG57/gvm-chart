@@ -1,6 +1,8 @@
-# GitHub Value and MongoDB Chart (beta release)
+# GitHub Value and MongoDB Chart (limited 1.0 release)
 
 This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
+
+[Watch the Getting Started Video](./Getting\ Started\ video.mp4")
 
 ## Prerequisites
 - A Kubernetes cluster (AKS, GKE, etc.).
