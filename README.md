@@ -2,10 +2,7 @@
 
 This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
 
-<video width="600" controls>
-  <source src="./Getting%20Started%20video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[Watch the Getting Started Video](https://raw.githubusercontent.com/MattG57/gvm-chart/main/Getting%20Started%20video.mp4)
 
 ## Prerequisites
 - A Kubernetes cluster (AKS, GKE, etc.).
