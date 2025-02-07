@@ -97,7 +97,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb10
+      repository: mgunter/github-value-mongodb11
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value

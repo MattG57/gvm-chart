@@ -1,0 +1,28 @@
+Getting Started video.mp4
+# Ignore test files
+*.test.js
+test/
+
+# Ignore temp files
+*.tmp
+*.temp
+
+# Ignore version control
+.git/
+.gitignore
+.svn/
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore docs
+*.md
+docs/
+
+scripts/
+build/
