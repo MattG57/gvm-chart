@@ -7,7 +7,7 @@ metadata:
   annotations:
     meta.helm.sh/release-name: "gvm-release"
     meta.helm.sh/release-namespace: "default"
-    helm.sh/resource-policy: "keep"  # Prevent deletion on uninstall
+    helm.sh/resource-policy: "keep"
 spec:
   accessModes:
     - ReadWriteOnce

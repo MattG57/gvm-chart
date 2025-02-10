@@ -1,7 +1,10 @@
 # Global configuration
 global:
+  storageClass: "premium-retain"   # Updated to match gke-values
   mongodb:
     uri: ""
+storageProvisioner: "disk.csi.azure.com"
+storageType: "managed"
 
 # MongoDB configuration
 mongodb:
@@ -12,16 +15,23 @@ mongodb:
 
   # Architecture config
   architecture: standalone  # Can be 'standalone' or 'replicaset'
-  replicaCount: 1  # Number of secondary nodes (not counting primary)
+  replicaCount: 3  # Match gke-values secondary count
   mongodbExtraFlags:
     - "--wiredTigerCacheSizeGB=1"
 
-  primary:
-    persistence:
-      storageClass: "managed-csi"
-  secondary:
-    persistence:
-      storageClass: "managed-csi"
+  # Merge persistence configuration into one block using premium-retain and same PVC name
+  persistence:
+    enabled: true
+    storageClass: "premium-retain"   # Updated from "managed-csi"
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi                      # Adjusted size to match gke-values
+    annotations:
+      helm.sh/resource-policy: keep
+    existingClaim: "gvm-release-mongodb"  # Same as gke-values
+    subPath: ""
+    mountPath: /bitnami/mongodb
+    volumeReclaimPolicy: Retain  
 
   # Metrics/Monitoring
   metrics:
@@ -38,18 +48,6 @@ mongodb:
   pdb:
     enabled: true
     minAvailable: 1
-
-  persistence:
-    enabled: true
-    storageClass: "managed-csi" # Adjust this to your storage class
-    accessModes:
-      - ReadWriteOnce
-    size: 8Gi
-    annotations: {}
-    existingClaim: "mongodb-pvc" #create in the manage script, outside of helm?
-    subPath: ""
-    mountPath: /bitnami/mongodb
-    volumeReclaimPolicy: Retain  
 
   # Affinity/Anti-affinity rules
   affinity:
@@ -73,7 +71,24 @@ mongodb:
 
   # Backup configuration (if using Velero or other backup solutions)
   backup:
-    enabled: false
+    enabled: true
+    cronjob:
+      storage:
+        enabled: true
+        storageClass: "premium-retain"
+        size: 20Gi
+        annotations:
+          helm.sh/resource-policy: keep
+      mongodb:
+        useRoot: true
+        secretName: "mongodb-root-secret"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
 
   # RBAC configuration
   rbac:
@@ -103,7 +118,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb10
+      repository: mgunter/github-value-mongodb20   # Updated to match gke-values
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -129,10 +144,10 @@ value-app-chart:
       GITHUB_APP_ID: "1053289"
     resources:
       requests:
-        cpu: "4"
+        cpu: "2"
         memory: "6Gi"
       limits:
-        cpu: "8"
+        cpu: "6"
         memory: "10Gi"
 
   # Sidecar container settings
@@ -187,10 +202,10 @@ value-app-chart:
 
   securityContext:
     runAsGroup: 1001
-    runAsUser: 0    
+    runAsUser: 1001    
 
   # Pod Security Context
   podSecurityContext:
     fsGroup: 1001
     runAsGroup: 1001
-    runAsUser: 0  
+    runAsUser: 1001

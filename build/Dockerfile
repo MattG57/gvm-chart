@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y git && apt-get clean
 # Clone the repository
 
 RUN git clone https://github.com/austenstone/github-value .
-# RUN git clone -b mongoose https://github.com/austenstone/github-value .
 
 # Install diagnostic utilities
 RUN apt-get update && apt-get install -y net-tools iputils-ping
@@ -28,7 +27,6 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Install backend dependencies
 WORKDIR /app/backend
 RUN npm install && npm run build
-RUN ls -la ./dist
 
 # Install frontend dependencies
 WORKDIR /app/frontend
@@ -44,5 +42,4 @@ WORKDIR /app/backend
 
 
 # Run the application
-#CMD node dist/index.js | ./node_modules/.bin/bunyan
 CMD [ "npm", "start" ]

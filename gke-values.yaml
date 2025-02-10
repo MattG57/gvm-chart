@@ -1,6 +1,8 @@
 # Global configuration #note: may need to specify architecture when moving images to private registry (e.g. podman pull docker.io/mgunter/github-value-mongodb:latest --arch=amd64)
 global:
   storageClass: "premium-retain"  # Use premium-retain as cluster-wide default
+  storageProvisioner: "pd.csi.storage.gke.io"
+  storageType: "pd-ssd"
   mongodb:
     uri: ""
 
@@ -115,7 +117,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb10
+      repository: mgunter/github-value-mongodb20
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -139,10 +141,10 @@ value-app-chart:
       GITHUB_APP_ID: "1067681"
     resources:
       requests:
-        cpu: "4"
+        cpu: "2"
         memory: "6Gi"
       limits:
-        cpu: "8"
+        cpu: "6"
         memory: "10Gi"
 
   # Sidecar container settings

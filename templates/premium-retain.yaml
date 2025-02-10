@@ -5,12 +5,12 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: "Helm"
   annotations:
-    meta.helm.sh/release-name: "gvm-release"
-    meta.helm.sh/release-namespace: "default"
+    meta.helm.sh/release-name: "{{ .Release.Name }}"
+    meta.helm.sh/release-namespace: "{{ .Release.Namespace }}"
     helm.sh/resource-policy: keep
-provisioner: pd.csi.storage.gke.io
+provisioner: {{ .Values.storageProvisioner | default "pd.csi.storage.gke.io" }}
 parameters:
-  type: pd-ssd
+  type: {{ .Values.storageType | default "pd-ssd" }}
 reclaimPolicy: Retain
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
