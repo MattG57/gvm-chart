@@ -1,9 +1,8 @@
 # Global configuration #note: may need to specify architecture when moving images to private registry (e.g. podman pull docker.io/mgunter/github-value-mongodb:latest --arch=amd64)
 global:
+  storageClass: "premium-retain"  # Use premium-retain as cluster-wide default
   mongodb:
     uri: ""
-
-
 
 # MongoDB configuration
 mongodb:
@@ -18,12 +17,18 @@ mongodb:
   mongodbExtraFlags:
     - "--wiredTigerCacheSizeGB=1"
 
-  primary:
-    persistence:
-      storageClass: "standard"
-  secondary:
-    persistence:
-      storageClass: "standard"
+  persistence:
+    enabled: true
+    storageClass: "premium-retain"  # Updated for Retain PVs
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi                    # Adjusted size
+    annotations:
+      helm.sh/resource-policy: keep   # Extra safety to prevent PVC deletion
+    existingClaim: "gvm-release-mongodb" #create in the manage script, outside of helm?
+    subPath: ""
+    mountPath: /bitnami/mongodb
+    volumeReclaimPolicy: Retain  
 
   # Metrics/Monitoring
   metrics:
@@ -40,10 +45,6 @@ mongodb:
   pdb:
     enabled: true
     minAvailable: 1
-
-  persistence:
-    enabled: true
-    size: 8Gi
 
   # Affinity/Anti-affinity rules
   affinity:
@@ -67,7 +68,24 @@ mongodb:
 
   # Backup configuration (if using Velero or other backup solutions)
   backup:
-    enabled: false
+    enabled: true                 # Enable backup cronjob
+    cronjob:
+      storage:
+        enabled: true
+        storageClass: "premium-retain"
+        size: 20Gi
+        annotations:
+          helm.sh/resource-policy: keep
+      mongodb:
+        useRoot: true             # Use root for backup
+        secretName: "mongodb-root-secret"  # Use the same secret as for rootPassword
+        resources:             # Add explicit resource requests/limits to satisfy Autopilot
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
 
   # RBAC configuration
   rbac:
@@ -97,7 +115,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb11
+      repository: mgunter/github-value-mongodb10
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -185,4 +203,4 @@ value-app-chart:
   podSecurityContext:
     fsGroup: 1001
     runAsGroup: 1001
-    runAsUser: 1001  
+    runAsUser: 1001

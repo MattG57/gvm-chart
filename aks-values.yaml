@@ -41,7 +41,15 @@ mongodb:
 
   persistence:
     enabled: true
-    size: 8Gi  
+    storageClass: "managed-csi" # Adjust this to your storage class
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+    existingClaim: "mongodb-pvc" #create in the manage script, outside of helm?
+    subPath: ""
+    mountPath: /bitnami/mongodb
+    volumeReclaimPolicy: Retain  
 
   # Affinity/Anti-affinity rules
   affinity:

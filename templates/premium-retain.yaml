@@ -1,0 +1,16 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: premium-retain
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: "gvm-release"
+    meta.helm.sh/release-namespace: "default"
+    helm.sh/resource-policy: keep
+provisioner: pd.csi.storage.gke.io
+parameters:
+  type: pd-ssd
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true

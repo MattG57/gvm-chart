@@ -128,7 +128,7 @@ fi
 # Helm action
 if [ "$ACTION" == "install" ]; then
     helm install gvm-release "$TARGET_CHART_DIR" -f "$VALUES_FILE" -n "$NAMESPACE"  \
-        --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD"
+        --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD" 
 elif [ "$ACTION" == "upgrade" ]; then
     helm upgrade gvm-release "$TARGET_CHART_DIR" -f "$VALUES_FILE" -n "$NAMESPACE" \
         --set mongodb.auth.rootPassword="$MONGODB_ROOT_PASSWORD"

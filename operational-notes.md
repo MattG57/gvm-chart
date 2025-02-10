@@ -15,7 +15,7 @@ Here is an example configuration in the `values.yaml` file of the Bitnami MongoD
 ```yaml
 persistence:
   enabled: true
-  storageClass: "standard" # Adjust this to your storage class
+  storageClass: "premium-retain" # Adjusted to use premium-retain storage class
   accessModes:
     - ReadWriteOnce
   size: 8Gi
@@ -30,6 +30,14 @@ By setting `volumeReclaimPolicy` to `Retain`, the persistent volumes will be ret
 
 For more detailed instructions, you can refer to the [Bitnami MongoDB Helm Chart documentation](https://github.com/bitnami/charts/tree/master/bitnami/mongodb).
 
+## Important Note on PV Reclaim Policy
+
+Once a Persistent Volume is created, its reclaim policy is immutable. Upgrading your Helm deployment will not change the policy on an existing PV. To change the reclaim policy, you must manually patch the PV:
+```bash
+kubectl patch pv <pv-name> -p '{ "spec": {"persistentVolumeReclaimPolicy": "Retain" } }'
+```
+Replace `<pv-name>` with your PV’s name. Alternatively, you may need to delete and reprovision the PV if that fits your workflow.
+
 # Existing PVC Reuse
 
 The `existingClaim` field is configured in the `values.yaml` file of the Bitnami MongoDB Helm chart. This field allows you to specify an existing Persistent Volume Claim (PVC) to be reused by the MongoDB deployment.
@@ -39,7 +47,7 @@ Here is an example of how to configure it in the `values.yaml` file:
 ```yaml
 persistence:
   enabled: true
-  storageClass: "standard" # Adjust this to your storage class if needed
+  storageClass: "premium-retain" # Adjusted to use premium-retain storage class
   accessModes:
     - ReadWriteOnce
   size: 8Gi # Adjust the size as needed
@@ -74,7 +82,7 @@ This ensures data continuity and persistence across deployments. Here is an exam
 ```yaml
 persistence:
   enabled: true
-  storageClass: "standard" # Adjust this to your storage class if needed
+  storageClass: "premium-retain" # Adjusted to use premium-retain storage class
   accessModes:
     - ReadWriteOnce
   size: 8Gi # Adjust the size as needed
@@ -88,8 +96,6 @@ persistence:
 By reusing the PVC, the new deployment will have access to the data stored in the PV by the old deployment, ensuring data persistence and availability.
 
 # Backup
-
-
 
 Yes, you can include cron jobs in your Helm chart deployment to handle periodic backups. This is typically done by creating Kubernetes `CronJob` resources that schedule and manage the execution of backup tasks at specified intervals.
 

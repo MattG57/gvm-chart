@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gvm-release-mongodb
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    meta.helm.sh/release-name: "gvm-release"
+    meta.helm.sh/release-namespace: "default"
+    helm.sh/resource-policy: "keep"  # Prevent deletion on uninstall
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: premium-retain

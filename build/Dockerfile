@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:23-slim
 
 
 RUN groupadd -g 1001 appgroup && \
@@ -28,6 +28,7 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Install backend dependencies
 WORKDIR /app/backend
 RUN npm install && npm run build
+RUN ls -la ./dist
 
 # Install frontend dependencies
 WORKDIR /app/frontend
@@ -43,4 +44,5 @@ WORKDIR /app/backend
 
 
 # Run the application
+#CMD node dist/index.js | ./node_modules/.bin/bunyan
 CMD [ "npm", "start" ]
