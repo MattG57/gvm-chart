@@ -117,11 +117,11 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb20
+      repository: mgunter/github-value-mongodb26
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
-    command: ["sh", "-c", "cd /app/backend && npm run start"]
+    command: ["sh", "-c", "cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"]
     #  command: ["sh", "-c", "sleep infinity"]
     volumes:
       - name: config-volume
@@ -138,7 +138,7 @@ value-app-chart:
     config:
       PORT: 8080
       BASE_URL: http://localhost:80
-      GITHUB_APP_ID: "1067681"
+      GITHUB_APP_ID: "1156336"
     resources:
       requests:
         cpu: "2"
