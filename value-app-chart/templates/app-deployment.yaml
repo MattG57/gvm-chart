@@ -68,6 +68,10 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          command:
+            {{- if .Values.app.command }}
+              {{- toYaml .Values.app.command | nindent 12 }}
+            {{- end }}
           volumeMounts:
             {{- toYaml .Values.app.volumeMounts | nindent 12 }}
           envFrom:
