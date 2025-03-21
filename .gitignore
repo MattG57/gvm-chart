@@ -3,3 +3,4 @@ charts/*
 .DS_Store
 *.lock
 env_vars.sh
+env_vars.sh.meli
