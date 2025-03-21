@@ -14,4 +14,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: premium-retain
+  storageClassName: {{ .Values.mongodb.persistence.storageClass | quote }}

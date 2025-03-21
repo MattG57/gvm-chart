@@ -1,6 +1,6 @@
 # Global configuration
 global:
-  storageClass: "premium-retain"   # Updated to match gke-values
+  storageClass: "managed-csi" #"premium-retain"   # Updated to match gke-values
   mongodb:
     uri: ""
 storageProvisioner: "disk.csi.azure.com"
@@ -17,12 +17,12 @@ mongodb:
   architecture: standalone  # Can be 'standalone' or 'replicaset'
   replicaCount: 3  # Match gke-values secondary count
   mongodbExtraFlags:
-    - "--wiredTigerCacheSizeGB=1"
+    - "--wiredTigerCacheSizeGB=2"
 
   # Merge persistence configuration into one block using premium-retain and same PVC name
   persistence:
     enabled: true
-    storageClass: "premium-retain"   # Updated from "managed-csi"
+    storageClass: "managed-csi"   # Updated from "managed-csi"
     accessModes:
       - ReadWriteOnce
     size: 10Gi                      # Adjusted size to match gke-values
@@ -75,7 +75,7 @@ mongodb:
     cronjob:
       storage:
         enabled: true
-        storageClass: "premium-retain"
+        storageClass: "managed-csi"
         size: 20Gi
         annotations:
           helm.sh/resource-policy: keep
@@ -118,14 +118,14 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb20   # Updated to match gke-values
+      repository: mgunter/github-value-mongodb30   # Updated to match gke-values
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
     command:
       - "sh"
       - "-c"
-      - "cd /app/backend && npm run start"
+      - "cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"
     volumes:
       - name: config-volume
         configMap:
@@ -141,11 +141,11 @@ value-app-chart:
     config:
       PORT: 8080
       BASE_URL: http://localhost:80
-      GITHUB_APP_ID: "1053289"
+      GITHUB_APP_ID: "1164816"
     resources:
       requests:
-        cpu: "2"
-        memory: "6Gi"
+        cpu: "3"
+        memory: "7Gi"
       limits:
         cpu: "6"
         memory: "10Gi"

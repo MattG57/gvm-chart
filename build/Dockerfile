@@ -11,6 +11,7 @@ RUN npm run build
 FROM node:${VARIANT} AS frontend-builder
 WORKDIR /app
 RUN apt-get update && apt-get install -y git
+# RUN git clone -b TempTargetReversionBranch --single-branch https://github.com/austenstone/github-value.git .
 RUN git clone https://github.com/austenstone/github-value.git .
 WORKDIR /app/frontend
 RUN npm install

@@ -1,0 +1,1 @@
+awk 'NF {printf "%s\\n", $0}' ~/Downloads/meli-copilot-github-value.2025-03-03.private-key.pem > newfile.txt

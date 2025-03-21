@@ -17,7 +17,7 @@ mongodb:
   architecture: standalone  # Can be 'standalone' or 'replicaset'
   replicaCount: 3  # Number of secondary nodes (not counting primary)
   mongodbExtraFlags:
-    - "--wiredTigerCacheSizeGB=1"
+    - "--wiredTigerCacheSizeGB=2"
 
   persistence:
     enabled: true
@@ -117,11 +117,12 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb26
+      repository: mgunter/github-value-mongodb30
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
-    command: ["sh", "-c", "cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"]
+    command: ["sh", "-c", "cd /app/backend && npm run start"]
+    #cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"]
     #  command: ["sh", "-c", "sleep infinity"]
     volumes:
       - name: config-volume
@@ -137,12 +138,12 @@ value-app-chart:
     configKey: config-value
     config:
       PORT: 8080
-      BASE_URL: http://localhost:80
+      BASE_URL: http://34.86.169.192
       GITHUB_APP_ID: "1156336"
     resources:
       requests:
-        cpu: "2"
-        memory: "6Gi"
+        cpu: "3"
+        memory: "7Gi"
       limits:
         cpu: "6"
         memory: "10Gi"

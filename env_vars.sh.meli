@@ -1,0 +1,6 @@
+# Environment variables for the deployment script
+
+export MONGODB_ROOT_PASSWORD="HHHHjjjj"
+export MONGODB_URI="mongodb://root:HHHHjjjj@gvm-release-mongodb:27017/"
+export PRIVATE_KEY_FILE="/Users/mattg57/Downloads/meli-copilot-github-value.2025-03-03.private-key.pem"
+export WEBHOOK_SECRET="abc123"
