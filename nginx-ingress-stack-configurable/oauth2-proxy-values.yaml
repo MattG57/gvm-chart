@@ -1,0 +1,11 @@
+
+config:
+  clientID: Ov23ctali7F2v7dHVGTJ               # ✅ Your GitHub OAuth App Client ID
+  clientSecret: dae97c55f09228ecadcd82640a57456560120fd1  # ✅ GitHub Client Secret
+  cookieSecret: 8bcd9d2851c7a49f59f85096b2dab1d9           # ✅ 32-byte base64-encoded or hex string
+
+extraArgs:
+  provider: github
+
+ingress:
+  enabled: false                                 # ingress handled separately (app-ingress + oauth ingress)

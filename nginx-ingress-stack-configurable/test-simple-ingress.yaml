@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-simple-ingress
+  namespace: default
+  annotations:
+    # Don't include any cert-manager annotations for this simple test
+    kubernetes.io/ingress.class: nginx
+spec:
+  ingressClassName: nginx
+  # No TLS for this test
+  rules:
+    - host: www.gvm-chart.com  # TBD: DNS name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

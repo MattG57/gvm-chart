@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress-oauth
+  namespace: default # TBD: namespace
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer # TBD: issuer name
+    # Use simplest form of auth-url with port number
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-oauth2-proxy.default.svc.cluster.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://www.gvm-chart.com/oauth2/start?rd=https://$host$request_uri"
+    # Add a response buffer to prevent upstream sent too big header errors
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
+spec:
+  ingressClassName: nginx # TBD: ingress class if different
+  tls:
+    - hosts:
+        - www.gvm-chart.com # TBD: DNS name
+      secretName: tls-secret # Use same secret as other ingresses
+  rules:
+    - host: www.gvm-chart.com # TBD: DNS name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web # TBD: service name
+                port:
+                  number: 80

@@ -189,7 +189,8 @@ value-app-chart:
 
   # Ingress configuration
   ingress:
-    enabled: false
+    enabled: true
+    className: "nginx"
     annotations: {}
     hosts:
       - host: example.com
@@ -197,6 +198,8 @@ value-app-chart:
           - path: /
             pathType: ImplementationSpecific
     tls: []
+
+
 
   securityContext:
     runAsGroup: 1001

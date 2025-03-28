@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-issuer # TBD: issuer name (e.g., letsencrypt-prod or letsencrypt-stage)
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # TBD: use staging or prod URL
+    email: mgunter@gmail.com # TBD: email address for Let's Encrypt notifications
+    privateKeySecretRef:
+      name: letsencrypt-privatekey # TBD: secret name for private key
+    solvers:
+      - http01:
+          ingress:
+            class: nginx # TBD: ingress class if different

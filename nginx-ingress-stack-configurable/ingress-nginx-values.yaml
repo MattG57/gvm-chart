@@ -1,0 +1,11 @@
+defaultBackend:
+  enabled: true
+
+controller:
+  service:
+    type: LoadBalancer # TBD: service type if different
+  config:
+    enable-ssl-passthrough: "true"
+  # Commenting out this section until certs are issued
+  # extraArgs:
+  #   default-ssl-certificate: default/tls-secret # TBD: namespace/secret-name for valid TLS certificate
