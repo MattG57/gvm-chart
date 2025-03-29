@@ -12,7 +12,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: debug-pod
-  namespace: default
+  namespace: {DEFAULT_NAMESPACE}
 spec:
   containers:
   - name: debug
@@ -24,7 +24,7 @@ echo "Waiting for debug pod to be ready..."
 kubectl wait --for=condition=ready pod debug-pod --timeout=60s
 
 echo "Testing connectivity to OAuth2 proxy service..."
-kubectl exec debug-pod -- curl -v http://oauth2.default.svc.cluster.local/ping
+kubectl exec debug-pod -- curl -v http://oauth2.{DEFAULT_NAMESPACE}.svc.cluster.local/ping
 
 echo "Cleaning up debug pod..."
 kubectl delete pod debug-pod

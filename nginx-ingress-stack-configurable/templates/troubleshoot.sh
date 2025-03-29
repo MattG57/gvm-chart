@@ -1,16 +1,16 @@
 #!/bin/bash
 
 echo "Checking web deployment status..."
-kubectl get deployment web -n default
+kubectl get deployment {SERVICE_NAME} -n {DEFAULT_NAMESPACE}
 
 echo "Checking web service status..."
-kubectl get service web -n default
+kubectl get service {SERVICE_NAME} -n {DEFAULT_NAMESPACE}
 
 echo "Checking service endpoints..."
-kubectl get endpoints web -n default
+kubectl get endpoints {SERVICE_NAME} -n {DEFAULT_NAMESPACE}
 
 echo "Checking ingress status..."
-kubectl get ingress -n default
+kubectl get ingress -n {DEFAULT_NAMESPACE}
 
 echo "Checking OAuth2 Proxy status..."
 kubectl get pods -l app=oauth2-proxy

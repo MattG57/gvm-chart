@@ -16,7 +16,7 @@ else
   echo "Service namespace: $NAMESPACE"
   
   # Update app-ingress-oauth.yaml with correct service reference
-  sed -i.bak "s|nginx.ingress.kubernetes.io/auth-url: \"http://oauth2.default.svc.cluster.local/oauth2/auth\"|nginx.ingress.kubernetes.io/auth-url: \"http://$SERVICE_NAME.$NAMESPACE.svc.cluster.local/oauth2/auth\"|g" app-ingress-oauth.yaml
+  sed -i.bak "s|nginx.ingress.kubernetes.io/auth-url: \"http://oauth2.{DEFAULT_NAMESPACE}.svc.cluster.local/oauth2/auth\"|nginx.ingress.kubernetes.io/auth-url: \"http://$SERVICE_NAME.$NAMESPACE.svc.cluster.local/oauth2/auth\"|g" app-ingress-oauth.yaml
   
   echo "Updated app-ingress-oauth.yaml with correct service reference"
   echo "New auth-url value:"

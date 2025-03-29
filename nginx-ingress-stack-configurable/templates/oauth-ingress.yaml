@@ -2,13 +2,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: oauth-ingress
-  namespace: default
+  namespace: {DEFAULT_NAMESPACE}
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-stage
+    cert-manager.io/cluster-issuer: {CERT_ISSUER}
 spec:
   ingressClassName: nginx
   rules:
-    - host: www.gvm-chart.com
+    - host: {DOMAIN}
       http:
         paths:
           - path: /oauth2
@@ -18,4 +18,4 @@ spec:
                 name: oauth2-oauth2-proxy
                 port:
                   number: 80
-                  
+

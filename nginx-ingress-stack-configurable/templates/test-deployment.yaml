@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web
-  namespace: default # TBD: namespace
+  name: {SERVICE_NAME}
+  namespace: {DEFAULT_NAMESPACE}
   labels:
-    app: web
+    app: {SERVICE_NAME}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web
+      app: {SERVICE_NAME}
   template:
     metadata:
       labels:
-        app: web
+        app: {SERVICE_NAME}
     spec:
       containers:
       - name: nginx
         image: nginx:latest
         ports:
-        - containerPort: 80
+        - containerPort: {SERVICE_PORT}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
-  namespace: default # TBD: namespace
+  name: {SERVICE_NAME}
+  namespace: {DEFAULT_NAMESPACE}
   labels:
-    app: web
+    app: {SERVICE_NAME}
 spec:
   ports:
-  - port: 80
-    targetPort: 80
+  - port: {SERVICE_PORT}
+    targetPort: {SERVICE_PORT}
     protocol: TCP
     name: http
   selector:
-    app: web
+    app: {SERVICE_NAME}

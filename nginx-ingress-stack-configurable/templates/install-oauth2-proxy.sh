@@ -12,7 +12,7 @@ helm uninstall oauth2 --ignore-not-found=true
 
 # Install with updated configuration
 helm install oauth2 oauth2-proxy/oauth2-proxy \
-  --namespace default \
+  --namespace {DEFAULT_NAMESPACE} \
   --values oauth2-proxy-values.yaml
 
 # Wait for the pod to be ready

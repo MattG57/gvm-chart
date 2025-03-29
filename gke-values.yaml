@@ -142,11 +142,11 @@ value-app-chart:
       GITHUB_APP_ID: "1156336"
     resources:
       requests:
-        cpu: "3"
-        memory: "7Gi"
+        cpu: "500m"
+        memory: "512Mi"
       limits:
-        cpu: "6"
-        memory: "10Gi"
+        cpu: "4"
+        memory: "6Gi"
 
   # Sidecar container settings
   poller:
@@ -156,8 +156,8 @@ value-app-chart:
     command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
     resources:
       requests:
-        cpu: "1"
-        memory: "2Gi"
+        cpu: "500m"
+        memory: "200Mi"
       limits:
         cpu: "2"
         memory: "4Gi"

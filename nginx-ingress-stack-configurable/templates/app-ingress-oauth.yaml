@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress-oauth
+  namespace: {DEFAULT_NAMESPACE}
+  annotations:
+    cert-manager.io/cluster-issuer: {CERT_ISSUER}
+    # Use simplest form of auth-url with port number
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-oauth2-proxy.{DEFAULT_NAMESPACE}.svc.cluster.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://{DOMAIN}/oauth2/start?rd=https://$host$request_uri"
+    # Add a response buffer to prevent upstream sent too big header errors
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {DOMAIN}
+      secretName: tls-secret
+  rules:
+    - host: {DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {SERVICE_NAME}
+                port:
+                  number: {SERVICE_PORT}
