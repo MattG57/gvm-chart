@@ -16,31 +16,73 @@ This repository contains a Helm chart for deploying a GitHub Value application a
 ## Repository Structure
 ```
 .
-├── Chart.yaml # umbrella/parent chart
+├── Chart.lock
+├── Chart.yaml
+├── Getting Started video.mp4
 ├── README.md
 ├── aks-values.yaml
+├── build
+│   ├── Dockerfile
+│   ├── Dockerfile-single-stage
+│   ├── build.sh
+│   └── entrypoint.sh
+├── charts
+│   ├── mongodb-16.4.1.tgz
+│   └── value-app-chart-0.1.0.tgz
+├── config-flow-analysis.md
+├── env_vars.sh
+├── env_vars.sh.meli
 ├── gke-values.yaml
-├── build/
-│   ├── Dockerfile
-│   ├── build.sh  # builds the docker image for the app 
-│   └── entrypoint.sh
-├── env_vars.sh    #temporary storage of secrets when testing, is not tracked by github
+├── how-to-format-pem-file.txt
+├── nginx-ingress-stack-configurable
+│   ├── README.md
+│   ├── image-1.png
+│   ├── image-2.png
+│   ├── image-3.png
+│   ├── image-4.png
+│   ├── image.png
+│   ├── ingress-config-example.sh
+│   ├── ingress-config.sh
+│   ├── render-templates.sh
+│   └── templates
+│       ├── app-ingress-basic.yaml
+│       ├── app-ingress-oauth.yaml
+│       ├── app-ingress-simple.yaml
+│       ├── check-oauth-connectivity.sh
+│       ├── cluster-issuer.yaml
+│       ├── create-temp-cert.sh
+│       ├── create_pw.sh
+│       ├── ingress-nginx-values.yaml
+│       ├── install-cert-manager.sh
+│       ├── install-ingress-nginx.sh
+│       ├── install-oauth2-proxy.sh
+│       ├── oauth-ingress.yaml
+│       ├── oauth2-proxy-values.yaml
+│       ├── setup-i.sh
+│       ├── test-deployment.yaml
+│       └── troubleshoot.sh
 ├── operational-notes.md
-├── scripts/
-│   ├── config-replica-endpts.sh  # necessary when deploying mongodb as a replicaset
-│   ├── manage-gvm-chart.sh       (active script for install/upgrade)
-│   ├── mongodb-external-service.yaml
-│   ├── reconfig.js   # example input to the config-replica-endpts.sh script
-│   ├── setup-helm.sh
-└── value-app-chart/
-    ├── Chart.yaml  #child/app chart
-    ├── templates/
-    │   ├── _helpers.tpl
-    │   ├── app-deployment.yaml
-    │   ├── configmap-github-value.yaml
-    │   ├── service.yaml
-    │   └── serviceaccount.yaml
-    └── values.yaml
+├── premium-retain.yaml
+├── scripts
+│   ├── config-replica-endpts.sh
+│   ├── install-cert-manager.sh
+│   ├── manage-gvm-chart.sh
+│   ├── mongodb-external-service.yaml
+│   ├── reconfig.js
+│   └── setup-helm.sh
+├── templates
+│   ├── ingress.yaml
+│   ├── mongodb-pvc.yaml
+│   └── premium-retain.yaml
+└── value-app-chart
+    ├── Chart.yaml
+    └── templates
+        ├── _helpers.tpl
+        ├── app-deployment.yaml
+        ├── service.yaml
+        └── serviceaccount.yaml
+
+9 directories, 57 files
 ```
 
 ## Setting Up Helm
@@ -54,20 +96,22 @@ Use the “manage-gvm-chart.sh” script to install or upgrade the chart. This s
 
 Syntax:
 ```bash
-./scripts/manage-gvm-chart.sh <install|upgrade> <values-file> <parent|child> [namespace]
+Usage: ./manage-gvm-chart.sh <install|upgrade> <values-file> <parent|child> <mongodb-type> [namespace]
+  mongodb-type: 'local' or 'external'
 ```
 Example for installing the parent (umbrella) chart using GKE values:
 ```bash
-./scripts/manage-gvm-chart.sh install gke-values.yaml parent
+./scripts/manage-gvm-chart.sh install gke-values.yaml parent internal
 ```
 Or upgrading the child chart for AKS in a custom namespace:
 ```bash
-./scripts/manage-gvm-chart.sh upgrade aks-values.yaml child my-namespace
+./scripts/manage-gvm-chart.sh upgrade aks-values.yaml child external mynamespace
 ```
 By default, the namespace is “default.”
 
 ## Configuration & Secrets
-The manage-gvm-chart.sh script prompts for sensitive information (e.g., MONGODB_ROOT_PASSWORD, private keys) so that they are never stored directly in the values.yaml file. Non-sensitive configurations such as application ID, port numbers, and basic environment-specific settings remain in the chart's values.yaml files.
+The manage-gvm-chart.sh script prompts for all configuration and handles sensitive information securely (e.g., MONGODB_ROOT_PASSWORD, private keys) so that they are never stored directly in the values.yaml file. Non-sensitive configurations such as application ID, port numbers, and basic environment-specific settings are also managed through the startup script to avoid confusion.  
+Note: The script optionally saves all of this config in a env_vars.sh file which is convenient for repeated installs or upgrades, but reduces security so remember to save this file to a secure location and delete it from the repo folder. (env_vars.sh is ignored by .gitignore)
 
 ## Additional MongoDB Configuration
 • config-replica-endpts.sh reconfigures the MongoDB replica set with external endpoints when using a LoadBalancer.  

@@ -70,3 +70,48 @@ The template system allows you to easily customize all aspects of the deployment
 3. Deploying the customized configuration
 
 This approach makes it easy to manage multiple environments with different settings.
+
+# Appendix: Enable OAuth Support for GitHub App Authentication
+
+## 1. Start from Your Existing App Settings Page
+Begin in the **GitHub App settings page** for your own app (e.g., from your Node.js app config flow).
+
+- ✅ Confirm that you're editing the correct GitHub App.
+- The **App Name** in the screenshots (`MG-GH-VALUE-TEST`) is **just an example** — your app name may be different.
+- Verify the **organization** (e.g., `octodemo`) matches your setup.
+
+![Value App Settings page](image-1.png)
+
+---
+
+## 2. Locate the App in GitHub
+If needed, navigate to: `https://github.com/enterprises/octodemo/settings/apps`  
+Then go to the **Settings** tab → **GitHub Apps**  
+Click on the app name **MG-GH-VALUE-TEST** to configure  
+![App List for Org/Enterprise in GitHub](image.png)
+
+---
+
+## 3. Open General Settings
+Go to the **General** tab of your GitHub App.  
+- Note the **App ID** and **Client ID**
+- Create a new **Client Secret** if needed  
+- Copy the **Public Link** for later testing  
+![General Settings-Note the ClientID and ClientSecret](image-4.png)
+
+---
+
+## 4. Add Callback URLs
+In the **General** tab, scroll to **Identifying and authorizing users**  
+Add your required **Callback URLs**, such as:
+- `https://oauth2.gvm-chart.com/oauth2/callback`
+- `https://www.gvm-chart.com/oauth2/callback`  
+![Callback URLs](image-2.png)
+
+---
+
+## 5. Set Required Permissions
+Go to **Permissions & events**  
+Under **Account permissions**, enable:
+- `Email addresses` → **Read-only**  
+![Permissions Page in Github for the APP](image-3.png)
