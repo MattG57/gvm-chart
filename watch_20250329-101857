@@ -1,0 +1,27 @@
+Every 2.0s: kubectl get deployment -n gvm                                          Matts-MacBook-Pro-2.local: 10:18:56
+                                                                                                         in 0.169s (0)
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE                                                            
+oauth2-oauth2-proxy   1/1     1            1           26m                                                            
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      
+                                                                                                                      

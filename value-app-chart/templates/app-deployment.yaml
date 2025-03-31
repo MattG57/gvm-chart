@@ -47,6 +47,8 @@ spec:
               cpu: {{ .Values.poller.resources.limits.cpu }}
           command:
             {{- toYaml .Values.poller.command | nindent 12 }}
+          envFrom:
+            {{- toYaml .Values.poller.envFrom | nindent 12 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -75,10 +77,7 @@ spec:
           volumeMounts:
             {{- toYaml .Values.app.volumeMounts | nindent 12 }}
           envFrom:
-            - configMapRef:
-                name: github-value-config
-            - secretRef:
-                name: github-value-secret
+            {{- toYaml .Values.app.envFrom | nindent 12 }}
       volumes:
         {{- toYaml .Values.app.volumes | nindent 8 }}
       {{- with .Values.nodeSelector }}

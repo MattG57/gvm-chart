@@ -4,7 +4,7 @@ metadata:
   name: {CERT_ISSUER}
 spec:
   acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory # TBD: use staging or prod URL
+    server: "{CERT_URL}" # TBD: for testing use https://acme-staging-v02.api.letsencrypt.org/directory
     email: {CERT_EMAIL}
     privateKeySecretRef:
       name: letsencrypt-privatekey

@@ -4,3 +4,5 @@ charts/*
 *.lock
 env_vars.sh
 env_vars.sh.meli
+nginx-ingress-stack-configurable/rendered
+nginx-ingress-stack-configurable/ingress-config.sh

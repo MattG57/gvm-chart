@@ -117,7 +117,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb30
+      repository: mgunter/github-value-mongodb30 # prompted for in the manage script and then set as an override to this value
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -125,25 +125,25 @@ value-app-chart:
     #cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"]
     #  command: ["sh", "-c", "sleep infinity"]
     volumes:
-      - name: config-volume
-        configMap:
-          name: github-value-config
       - name: working-volume
         emptyDir: {}
     volumeMounts:
-      - name: config-volume
-        mountPath: /etc/config
       - name: working-volume
         mountPath: /app/backend/logs
+    envFrom:
+      - configMapRef:
+          name: github-value-config
+      - secretRef:
+          name: github-value-secret
     configKey: config-value
     config:
-      PORT: 8080
-      BASE_URL: http://34.86.169.192
-      GITHUB_APP_ID: "1156336"
+      PORT: 8080    # prompted for in the manage script and this value is IGNORED
+      BASE_URL: http://34.86.169.192    # prompted for in the manage script and this value is IGNORED
+      GITHUB_APP_ID: "1156336"    # prompted for in the manage script and this value is IGNORED
     resources:
       requests:
-        cpu: "500m"
-        memory: "512Mi"
+        cpu: "1"
+        memory: "2Gi"
       limits:
         cpu: "4"
         memory: "6Gi"
@@ -152,8 +152,13 @@ value-app-chart:
   poller:
     enabled: true
     name: "mongodb-poller"
-    image: busybox
-    command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
+    image: mongo:6
+    command: ["sh", "-c", "echo \"Testing MongoDB connection using MONGODB_URI\"; until mongosh \"${MONGODB_URI}\" --eval \"db.runCommand({ping:1})\" > /dev/null; do echo \"waiting for mongodb\"; sleep 5; done"]
+    envFrom:
+      - configMapRef:
+          name: github-value-config
+      - secretRef:
+          name: github-value-secret
     resources:
       requests:
         cpu: "500m"
@@ -171,7 +176,7 @@ value-app-chart:
     type: LoadBalancer
     protocol: TCP
     port: 80
-    targetPort: 8080 # must match PORT config value
+    targetPort: 8080 # must match PORT config value, PORT is prompted for in the manage script and then set as an override to this value
     nodePort: 30080
 
   # MongoDB connection settings
