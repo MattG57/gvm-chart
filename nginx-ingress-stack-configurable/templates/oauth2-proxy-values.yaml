@@ -14,3 +14,12 @@ extraArgs:
 
 ingress:
   enabled: false                                 # ingress handled separately (app-ingress + oauth ingress)
+
+tolerations:
+  - key: "CriticalAddonsOnly"
+    operator: "Exists"
+    effect: "NoSchedule"
+  - key: "kubernetes.azure.com/scalesetpriority"
+    operator: "Equal"
+    value: "spot"
+    effect: "NoSchedule"

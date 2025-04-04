@@ -17,7 +17,7 @@ mongodb:
   architecture: standalone  # Can be 'standalone' or 'replicaset'
   replicaCount: 3  # Match gke-values secondary count
   mongodbExtraFlags:
-    - "--wiredTigerCacheSizeGB=2"
+    - "--wiredTigerCacheSizeGB=1"    # Reduced from 2
 
   # Merge persistence configuration into one block using premium-retain and same PVC name
   persistence:
@@ -25,7 +25,7 @@ mongodb:
     storageClass: "managed-csi"   # Updated from "managed-csi"
     accessModes:
       - ReadWriteOnce
-    size: 10Gi                      # Adjusted size to match gke-values
+    size: 8Gi                      # Reduced from 10Gi
     annotations:
       helm.sh/resource-policy: keep
     existingClaim: "gvm-release-mongodb"  # Same as gke-values
@@ -103,6 +103,16 @@ mongodb:
     autoDiscovery:
       enabled: true
 
+  # Tolerations
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "kubernetes.azure.com/scalesetpriority"
+      operator: "Equal"
+      value: "spot"
+      effect: "NoSchedule"
+
   # Value App Chart Configuration
 value-app-chart:
   name: github-value-chart
@@ -122,30 +132,25 @@ value-app-chart:
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
-    command:
-      - "sh"
-      - "-c"
-      - "cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"
+    command: ["sh", "-c", "cd /app/backend && npm run start"]
+    #cd /app/backend/dist && node index.js | ../node_modules/.bin/bunyan -o short -l info"]
+    #  command: ["sh", "-c", "sleep infinity"]
     volumes:
-      - name: config-volume
-        configMap:
-          name: github-value-config
       - name: working-volume
         emptyDir: {}
     volumeMounts:
-      - name: config-volume
-        mountPath: /etc/config
       - name: working-volume
         mountPath: /app/backend/logs
+    envFrom:
+      - configMapRef:
+          name: github-value-config
+      - secretRef:
+          name: github-value-secret
     configKey: config-value
-    config:
-      PORT: 8080
-      BASE_URL: http://localhost:80
-      GITHUB_APP_ID: "1164816"
     resources:
       requests:
-        cpu: "3"
-        memory: "7Gi"
+        cpu: "1"
+        memory: "4Gi"
       limits:
         cpu: "6"
         memory: "10Gi"
@@ -154,12 +159,17 @@ value-app-chart:
   poller:
     enabled: true
     name: "mongodb-poller"
-    image: busybox
-    command: ["sh", "-c", "until nc -zv gvm-release-mongodb 27017; do echo 'waiting for mongodb'; sleep 5; done"]
+    image: mongo:6
+    command: ["sh", "-c", "echo \"Testing MongoDB connection using MONGODB_URI\"; until mongosh \"${MONGODB_URI}\" --eval \"db.runCommand({ping:1})\" > /dev/null; do echo \"waiting for mongodb\"; sleep 5; done"]
+    envFrom:
+      - configMapRef:
+          name: github-value-config
+      - secretRef:
+          name: github-value-secret
     resources:
       requests:
-        cpu: "1"
-        memory: "2Gi"
+        cpu: "500m"
+        memory: "200Mi"
       limits:
         cpu: "2"
         memory: "4Gi"
@@ -181,6 +191,16 @@ value-app-chart:
     service:
       name: gvm-release-mongodb
 
+  # Tolerations
+  tolerations:
+    - key: "CriticalAddonsOnly"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "kubernetes.azure.com/scalesetpriority"
+      operator: "Equal"
+      value: "spot"
+      effect: "NoSchedule"
+
   # Service Account configuration
   serviceAccount:
     create: true
@@ -188,17 +208,6 @@ value-app-chart:
     automount: true
     annotations:
       example-annotation: value
-
-  # Ingress configuration
-  ingress:
-    enabled: false
-    annotations: {}
-    hosts:
-      - host: example.com
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls: []
 
   securityContext:
     runAsGroup: 1001

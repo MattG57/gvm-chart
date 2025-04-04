@@ -136,10 +136,6 @@ value-app-chart:
       - secretRef:
           name: github-value-secret
     configKey: config-value
-    config:
-      PORT: 8080    # prompted for in the manage script and this value is IGNORED
-      BASE_URL: http://34.86.169.192    # prompted for in the manage script and this value is IGNORED
-      GITHUB_APP_ID: "1156336"    # prompted for in the manage script and this value is IGNORED
     resources:
       requests:
         cpu: "1"
@@ -184,6 +180,10 @@ value-app-chart:
     service:
       name: gvm-release-mongodb
 
+  securityContext:
+    runAsGroup: 1001
+    runAsUser: 1001      
+
   # Service Account configuration
   serviceAccount:
     create: true
@@ -191,24 +191,6 @@ value-app-chart:
     automount: true
     annotations:
       example-annotation: value
-
-  # Ingress configuration
-  ingress:
-    enabled: true
-    className: "nginx"
-    annotations: {}
-    hosts:
-      - host: example.com
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls: []
-
-
-
-  securityContext:
-    runAsGroup: 1001
-    runAsUser: 1001    
 
   # Pod Security Context
   podSecurityContext:

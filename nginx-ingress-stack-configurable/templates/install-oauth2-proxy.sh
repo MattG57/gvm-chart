@@ -21,7 +21,7 @@ kubectl wait --for=condition=ready pod -l app=oauth2-proxy --timeout=60s -n {DEF
 
 # Get the actual service name
 echo "Checking OAuth2 Proxy service name:"
-OAUTH_SVC=$(kubectl get svc -l app=oauth2-proxy -o jsonpath='{.items[0].metadata.name} -n {DEFAULT_NAMESPACE}')
+OAUTH_SVC=$(kubectl get svc -l app=oauth2-proxy -o jsonpath='{.items[0].metadata.name}' -n {DEFAULT_NAMESPACE})
 echo "Service name: $OAUTH_SVC"
 
 echo "Checking OAuth2 Proxy logs:"
