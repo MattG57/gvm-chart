@@ -116,6 +116,15 @@ validate_config() {
   if [ "$OAUTH_PROVIDER" = "github" ] && [ -z "$GITHUB_ORG" ]; then
     echo "❌ WARNING: GITHUB_ORG is empty but OAUTH_PROVIDER is github"
   fi
+
+  # Nginx Controller validation
+  if [ -z "$EXTERNAL_TRAFFIC_POLICY" ]; then
+    echo "❌ ERROR: EXTERNAL_TRAFFIC_POLICY is empty"
+    has_errors=1
+  elif [[ ! "$EXTERNAL_TRAFFIC_POLICY" =~ ^(Local|Cluster)$ ]]; then
+    echo "❌ ERROR: EXTERNAL_TRAFFIC_POLICY must be either 'Local' or 'Cluster'"
+    has_errors=1
+  fi
   
   return $has_errors
 }
@@ -146,6 +155,7 @@ echo "OAuth Client ID: [REDACTED]"
 echo "OAuth Client Secret: [REDACTED]"
 echo "OAuth Cookie Secret: [REDACTED]"
 echo "GitHub Organization: $GITHUB_ORG"
+echo "External Traffic Policy: $EXTERNAL_TRAFFIC_POLICY"
 
 # Function to render a template file
 render_template() {
@@ -176,6 +186,7 @@ render_template() {
   sed -i.bak "s#{OAUTH_COOKIE_SECRET}#$OAUTH_COOKIE_SECRET#g" "$output"
   sed -i.bak "s#{OAUTH_PROVIDER}#$OAUTH_PROVIDER#g" "$output"
   sed -i.bak "s#{GITHUB_ORG}#$GITHUB_ORG#g" "$output"
+  sed -i.bak "s#{EXTERNAL_TRAFFIC_POLICY}#$EXTERNAL_TRAFFIC_POLICY#g" "$output"
   
   # Remove backup files
   rm -f "$output.bak"
@@ -195,8 +206,6 @@ done
 # Copy setup script from templates directory and render it
 render_template "templates/setup-i.sh" "$OUTPUT_DIR/setup-i.sh"
 
-# Copy any supporting files needed
-cp templates/ingress-nginx-values.yaml "$OUTPUT_DIR/" 2>/dev/null || true
 
 echo "All templates have been rendered to $OUTPUT_DIR/"
 echo "You can now run the setup script from the rendered directory:"

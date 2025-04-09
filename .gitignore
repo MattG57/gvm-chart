@@ -3,6 +3,7 @@ charts/*
 .DS_Store
 *.lock
 env_vars.sh
-env_vars.sh.meli
+env_vars.sh.*
 nginx-ingress-stack-configurable/rendered
 nginx-ingress-stack-configurable/ingress-config.sh
+nginx-ingress-stack-configurable/ingress-config.sh.*

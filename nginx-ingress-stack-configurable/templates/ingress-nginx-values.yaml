@@ -1,19 +1,15 @@
+controller:
+  enabled: true
+  service:
+    type: LoadBalancer
+    externalTrafficPolicy: {EXTERNAL_TRAFFIC_POLICY}
+  # Default configuration for nginx controller
+  config: {}
+  # No SSL passthrough by default
+  # No tolerations by default
+
 defaultBackend:
   enabled: true
-
-controller:
-  service:
-    type: LoadBalancer # TBD: service type if different
-  config:
-    enable-ssl-passthrough: "true"
-  tolerations:
-    - key: "CriticalAddonsOnly"
-      operator: "Exists"
-      effect: "NoSchedule"
-    - key: "kubernetes.azure.com/scalesetpriority"
-      operator: "Equal"
-      value: "spot"
-      effect: "NoSchedule"
   # Commenting out this section until certs are issued
   # extraArgs:
   #   default-ssl-certificate: default/tls-secret # TBD: namespace/secret-name for valid TLS certificate
