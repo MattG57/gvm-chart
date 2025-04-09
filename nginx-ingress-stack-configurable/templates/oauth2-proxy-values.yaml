@@ -2,15 +2,28 @@ config:
   clientID: {OAUTH_CLIENT_ID}
   clientSecret: {OAUTH_CLIENT_SECRET}
   cookieSecret: {OAUTH_COOKIE_SECRET}
-  githubOrg: {GITHUB_ORG} 
 
 extraArgs:
-  provider: {OAUTH_PROVIDER}
-  # github-org: {GITHUB_ORG} seems to be ignored
+  provider: github
+  github-org: {GITHUB_ORG}
   whitelist-domain: "{DOMAIN}"
   cookie-domain: "{DOMAIN}"
   pass-basic-auth: "true"
   pass-user-headers: "true"
+  set-xauthrequest: "true"
+  pass-access-token: "true"
+  pass-authorization-header: "true"
+
+####. With the above config, your Node.js app will receive:
+
+#Header	Value
+#X-Auth-Request-User	GitHub username
+#X-Auth-Request-Email	GitHub email
+#Authorization	Bearer token (optional use)
+# You can access these directly in Express like:
+
+#const user = req.headers['x-auth-request-user'];
+#const email = req.headers['x-auth-request-email'];
 
 ingress:
   enabled: false                                 # ingress handled separately (app-ingress + oauth ingress)
