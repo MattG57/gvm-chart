@@ -5,7 +5,7 @@ config:
 
 extraArgs:
   provider: github
-  github-org: {GITHUB_ORG}
+  github-org: "{GITHUB_ORG}"
   whitelist-domain: "{DOMAIN}"
   cookie-domain: "{DOMAIN}"
   pass-basic-auth: "true"
@@ -13,6 +13,8 @@ extraArgs:
   set-xauthrequest: "true"
   pass-access-token: "true"
   pass-authorization-header: "true"
+  scope: "user:email read:org"
+  email-domain: "*"
 
 ####. With the above config, your Node.js app will receive:
 
@@ -28,11 +30,11 @@ extraArgs:
 ingress:
   enabled: false                                 # ingress handled separately (app-ingress + oauth ingress)
 
-tolerations:
-  - key: "CriticalAddonsOnly"
-    operator: "Exists"
-    effect: "NoSchedule"
-  - key: "kubernetes.azure.com/scalesetpriority"
-    operator: "Equal"
-    value: "spot"
-    effect: "NoSchedule"
+# tolerations:  #TODO delete
+#   - key: "CriticalAddonsOnly"
+#     operator: "Exists"
+#     effect: "NoSchedule"
+#   - key: "kubernetes.azure.com/scalesetpriority"
+#     operator: "Equal"
+#     value: "spot"
+#     effect: "NoSchedule"

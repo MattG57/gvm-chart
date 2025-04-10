@@ -22,7 +22,7 @@ steps=(
   "Create temporary TLS certificate|bash ./create-temp-cert.sh|kubectl get secret tls-secret -n {DEFAULT_NAMESPACE}"
   "Install nginx ingress controller|./install-ingress-nginx.sh|kubectl get pods -n ingress-nginx"
   " Configure DNS for controller external IP|kubectl get svc -n ingress-nginx|echo 'Confirm Loadbalancer was created and Configure DNS for controller external IP'"
-  "Create basic auth secret|./create_pw.sh|kubectl get secret basic-auth-secret -n {DEFAULT_NAMESPACE}"
+  "Create basic auth secret|./create-pw.sh|kubectl get secret basic-auth-secret -n {DEFAULT_NAMESPACE}"
   "Deploy test web application| kubectl apply -f test-deployment.yaml |kubectl get svc {SERVICE_NAME} -n {SERVICE_NAMESPACE} && kubectl get endpoints {SERVICE_NAME} -n {SERVICE_NAMESPACE}"
   "Wait for controller cache to sync|sleep 30|echo 'Waited 30 seconds for controller cache to sync'"
   "Apply simple test ingress|kubectl apply -f app-ingress-simple.yaml |kubectl describe ingress simple-ingress "
@@ -31,7 +31,8 @@ steps=(
   "Delete basic-auth ingress |kubectl delete -f app-ingress-basic.yaml |kubectl get ingress app-ingress-basic "
   "Install oauth2-proxy|./install-oauth2-proxy.sh|kubectl get pods -l app=oauth2-proxy -n {DEFAULT_NAMESPACE}"
   "Apply app ingress with oauth|kubectl apply -f app-ingress-oauth.yaml |kubectl describe ingress app-ingress-oauth "
-  "Apply app ingress for oauth traffic|kubectl apply -f oauth-ingress.yaml -n {DEFAULT_NAMESPACE}|kubectl describe ingress oauth-ingress -n {DEFAULT_NAMESPACE}"
+  "Apply app ingress for non-authenticated oauth handshake traffic|kubectl apply -f oauth-ingress.yaml -n {DEFAULT_NAMESPACE}|kubectl describe ingress oauth-ingress -n {DEFAULT_NAMESPACE}"
+  "Apply app ingress for inbound webhook traffic|kubectl apply -f webhook-ingress.yaml -n {DEFAULT_NAMESPACE}|kubectl describe ingress webhook-ingress -n {DEFAULT_NAMESPACE} # this requires webhook url to be configured in github and the settings page to https://{DOMAIN}/api/github/webhooks"
 )
 
 if [ $start_step -ge ${#steps[@]} ]; then

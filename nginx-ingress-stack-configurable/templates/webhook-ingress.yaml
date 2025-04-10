@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webhook-ingress  # this is only required if github webhooks are configured in github and the settings page to https://{DOMAIN}/api/github/webhooks
+  namespace: {DEFAULT_NAMESPACE}
+  annotations:
+    cert-manager.io/cluster-issuer: {CERT_ISSUER}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {DOMAIN}
+      secretName: tls-secret
+  rules:
+    - host: {DOMAIN}
+      http:
+        paths:
+          - path: /api/github/webhooks
+            pathType: Prefix
+            backend:
+              service:
+                name: {SERVICE_NAME}
+                port:
+                  number: {SERVICE_PORT}
+
