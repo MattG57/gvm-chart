@@ -5,9 +5,10 @@ This repository contains a Helm chart for deploying a GitHub Value application a
 [Watch the Getting Started Video](https://raw.githubusercontent.com/MattG57/gvm-chart/main/Getting%20Started%20video.mp4)
 
 ## Prerequisites
-- A Kubernetes cluster (AKS, GKE, etc.).
+- A Kubernetes cluster (AKS, GKE, EKS, etc.).
 - Helm 3.x installed and configured.
 - kubectl configured with cluster access.
+- desire for knowledge
 
 ## Network Diagram
 <img width="1115" alt="image" src="https://github.com/user-attachments/assets/fd95b638-a2f2-4fe0-9a4e-46159167eeea" />
