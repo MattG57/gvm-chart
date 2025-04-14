@@ -1,18 +1,32 @@
-name: 'PR Survey Comment'
-description: 'Posts a PR comment with a survey link containing PR metadata'
+name: PR Survey
 
-inputs:
-  base-url:
-    description: 'https://www.gvm-chart.com/copilot/surveys/new'
-    required: true
+on:
+  pull_request:
+    types: [opened]  # Trigger when PRs are opened
 
-runs:
-  using: 'composite'
-  steps:
-    - name: Post PR feedback comment
-      uses: peter-evans/create-or-update-comment@v4
-      with:
-        token: ${{ github.token }}
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
-          🧠 [Click to give feedback](${{ inputs.base-url }}?author=${{ github.event.pull_request.user.login }}&repo=${{ github.repository }}&prno=${{ github.event.pull_request.number }})
+jobs:
+  post-survey:
+    runs-on: ubuntu-latest
+    steps:
+      # Use the reusable PR Survey Comment action
+      - name: Post Survey Comment
+        uses: MattG57/Copilot-Value-Estimate
+        with:
+          base-url: 'https://www.gvm-chart.com/copilot/surveys/new'
+          # Optional: Customize the message
+          custom-message: '📊 Thank you for your contribution! We would love your feedback on this PR experience.'
+          # Optional: Add additional query parameters
+          additional-params: '{"team":"engineering","source":"github-action"}'
+
+  # You can combine this with other PR workflows
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up environment
+        # Your setup steps here
+        run: echo "Setting up test environment"
+      
+      - name: Run tests
+        # Your test command here
+        run: echo "Running tests"
