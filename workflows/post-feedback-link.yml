@@ -1,8 +1,11 @@
-name: Post Feedback Link
+name: estimate copilot time savings
 
 on:
+  push:
+    branches: [main]
   pull_request:
     types: [opened, reopened, synchronize]
+  workflow_dispatch:
 
 permissions:
   pull-requests: write
