@@ -1,0 +1,14 @@
+name: Post Feedback Link
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  post-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post PR feedback link
+        uses: octodemo/Copilot-Value-Estimate@v1
+        with:
+          base-url: https://www.gvm-chart.com/copilot/surveys/new
