@@ -1,21 +1,17 @@
-name: PR Survey Comment
+name: Post Feedback Link
+
 on:
   pull_request:
-    types: [opened, reopened]  # Specifically define when this should trigger
+    types: [opened, reopened]
 
 jobs:
-  post-survey:
+  survey-comment:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
-      - name: Post PR feedback comment
-        uses: peter-evans/create-or-update-comment@v4
+
+      - name: Comment with survey link
+        uses: octodemo/Copilot-Value-Estimate/action.yml  # or wherever your action.yml is
         with:
-          token: ${{ github.token }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            📊 Thank you for your contribution! We would love your feedback on this PR experience.
-            
-            [Click to give feedback](https://www.gvm-chart.com/copilot/surveys/new?author=${{ github.event.pull_request.user.login }}&repo=${{ github.repository }}&prno=${{ github.event.pull_request.number }}&team=engineering&source=github-action)
+          base-url: https://www.gvm-chart.com/copilot/surveys/new
