@@ -1,20 +1,17 @@
-name: estimate copilot time savings
+name: 'PR Survey Comment'
+description: 'Posts a PR comment with a survey link'
+inputs:
+  base-url:
+    description: 'Base survey URL'
+    required: true
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    types: [opened, reopened, synchronize]
-  workflow_dispatch:
-
-permissions:
-  pull-requests: write
-
-jobs:
-  post-comment:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Post PR feedback link
-        uses: octodemo/Copilot-Value-Estimate@v1
-        with:
-          base-url: https://www.gvm-chart.com/copilot/surveys/new
+runs:
+  using: 'composite'
+  steps:
+    - name: Comment
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        token: ${{ github.token }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          🧠 [Click to give feedback](${{ inputs.base-url }}?author=${{ github.event.pull_request.user.login }}&repo=${{ github.repository }}&prno=${{ github.event.pull_request.number }})
