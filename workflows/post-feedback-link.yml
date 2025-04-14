@@ -1,23 +1,20 @@
 name: PR Survey
-
 on:
   pull_request:
     types: [opened]  # Trigger when PRs are opened
-
 jobs:
   post-survey:
     runs-on: ubuntu-latest
     steps:
       # Use the reusable PR Survey Comment action
       - name: Post Survey Comment
-        uses: MattG57/Copilot-Value-Estimate
+        uses: MattG57/Copilot-Value-Estimate@main  # Added @main to specify the branch
         with:
           base-url: 'https://www.gvm-chart.com/copilot/surveys/new'
           # Optional: Customize the message
           custom-message: '📊 Thank you for your contribution! We would love your feedback on this PR experience.'
           # Optional: Add additional query parameters
           additional-params: '{"team":"engineering","source":"github-action"}'
-
   # You can combine this with other PR workflows
   run-tests:
     runs-on: ubuntu-latest
