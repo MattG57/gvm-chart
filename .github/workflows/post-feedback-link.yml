@@ -1,1 +1,18 @@
-uses: octodemo/Copilot-Value-Estimate@v1
+# .github/workflows/post-feedback-link.yml
+name: Post Feedback Link
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  post-survey:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Comment with survey link
+        uses: octodemo/Copilot-Value-Estimate@v1  # THIS points to the action.yml
+        with:
+          base-url: https://www.gvm-chart.com/copilot/surveys/new
