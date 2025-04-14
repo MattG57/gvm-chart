@@ -1,6 +1,6 @@
 # GitHub Value and MongoDB Chart ( 2/2025 release)
 
-This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
+This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency. The parent chart or the child chart can be used via the manage script.
 
 [Watch the Getting Started Video](https://raw.githubusercontent.com/MattG57/gvm-chart/main/Getting%20Started%20video.mp4)
 
