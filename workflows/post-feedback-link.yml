@@ -1,14 +1,15 @@
 name: 'PR Survey Comment'
-description: 'Posts a PR comment with a survey link'
+description: 'Posts a PR comment with a survey link containing PR metadata'
+
 inputs:
   base-url:
-    description: 'Base survey URL'
+    description: 'https://www.gvm-chart.com/copilot/surveys/new'
     required: true
 
 runs:
   using: 'composite'
   steps:
-    - name: Comment
+    - name: Post PR feedback comment
       uses: peter-evans/create-or-update-comment@v4
       with:
         token: ${{ github.token }}
