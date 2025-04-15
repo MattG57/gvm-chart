@@ -1,13 +1,14 @@
-# GitHub Value and MongoDB Chart ( 2/2025 release)
+# GitHub Value and MongoDB Chart ( 4/2025 release)
 
-This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency.
+This repository contains a Helm chart for deploying a GitHub Value application alongside a MongoDB instance. The MongoDB chart is included as a dependency. The parent chart or the child chart can be used via the manage script.
 
 [Watch the Getting Started Video](https://raw.githubusercontent.com/MattG57/gvm-chart/main/Getting%20Started%20video.mp4)
 
 ## Prerequisites
-- A Kubernetes cluster (AKS, GKE, etc.).
+- A Kubernetes cluster (AKS, GKE, EKS, etc.).
 - Helm 3.x installed and configured.
 - kubectl configured with cluster access.
+- desire for knowledge
 
 ## Network Diagram
 <img width="1115" alt="image" src="https://github.com/user-attachments/assets/fd95b638-a2f2-4fe0-9a4e-46159167eeea" />

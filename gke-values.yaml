@@ -149,7 +149,7 @@ value-app-chart:
     resources:
       requests:
         cpu: "1"
-        memory: "8Gi"
+        memory: "6Gi"
       limits:
         cpu: "4"
         memory: "10Gi"
