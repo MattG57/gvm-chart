@@ -18,6 +18,16 @@ mongodb:
   replicaCount: 3  # Number of secondary nodes (not counting primary)
   mongodbExtraFlags:
     - "--wiredTigerCacheSizeGB=2"
+  resources:
+    limits:
+      cpu: 2
+      ephemeral-storage: 2Gi
+      memory: 2Gi
+    requests:
+      cpu: 1
+      ephemeral-storage: 100Mi
+      memory: 2Gi
+
 
   persistence:
     enabled: true
@@ -117,7 +127,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb30 # prompted for in the manage script and then set as an override to this value
+      repository: mgunter/github-value-mongodb38 # prompted for in the manage script and then set as an override to this value
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -139,10 +149,10 @@ value-app-chart:
     resources:
       requests:
         cpu: "1"
-        memory: "2Gi"
+        memory: "8Gi"
       limits:
         cpu: "4"
-        memory: "6Gi"
+        memory: "10Gi"
 
   # Sidecar container settings
   poller:

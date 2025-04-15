@@ -18,6 +18,16 @@ mongodb:
   replicaCount: 3  # Match gke-values secondary count
   mongodbExtraFlags:
     - "--wiredTigerCacheSizeGB=1"    # Reduced from 2
+  resources:
+     limits:
+       cpu: 2
+       ephemeral-storage: 2Gi
+       memory: 2Gi
+     requests:
+       cpu: 1
+       ephemeral-storage: 1Gi
+       memory: 2Gi
+
 
   # Merge persistence configuration into one block using premium-retain and same PVC name
   persistence:
@@ -128,7 +138,7 @@ value-app-chart:
   # Primary application container (frontend/backend)
   app:
     image:
-      repository: mgunter/github-value-mongodb30   # Updated to match gke-values
+      repository: mgunter/github-value-mongodb38   # Updated to match gke-values
       tag: "latest"
       pullPolicy: IfNotPresent
     name: github-value
@@ -149,8 +159,8 @@ value-app-chart:
     configKey: config-value
     resources:
       requests:
-        cpu: "1"
-        memory: "4Gi"
+        cpu: "2"
+        memory: "5Gi"
       limits:
         cpu: "6"
         memory: "10Gi"

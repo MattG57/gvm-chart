@@ -7,3 +7,6 @@ env_vars.sh.*
 nginx-ingress-stack-configurable/rendered
 nginx-ingress-stack-configurable/ingress-config.sh
 nginx-ingress-stack-configurable/ingress-config.sh.*
+node_modules/*
+test-oauth/*.json
+

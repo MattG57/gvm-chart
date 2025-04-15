@@ -15,14 +15,14 @@ CHART_DIR="$(dirname "$SCRIPT_DIR")"
 if [ $# -lt 4 ]; then
     echo "Error: Missing required arguments <install|upgrade> <values-file> <parent|child> <mongodb-type> [namespace]"
     echo "Usage: ./manage-gvm-chart.sh <install|upgrade> <values-file> <parent|child> <mongodb-type> [namespace]"
-    echo "  mongodb-type: 'local' or 'external'"
+    echo "  mongodb-type: 'internal' or 'external'"
     exit 1
 fi
 
 ACTION="$1"        # install or upgrade
 VALUES_ARG="$2"    # values file
 CHART_TYPE="$3"    # parent or child
-MONGODB_TYPE="$4"  # local or external
+MONGODB_TYPE="$4"  # internal or external
 
 # Default NAMESPACE to 'default' if not supplied
 NAMESPACE="${5:-default}"
@@ -91,7 +91,7 @@ if [ "$MONGODB_TYPE" == "external" ] && [ "$CHART_TYPE" == "child" ]; then
     USE_LOCAL_MONGODB="false"
     
 else
-    echo "Using local MongoDB..."
+    echo "Using local/internal MongoDB..."
     
     # Prompt for local MongoDB root password if not set in the environment
     if [ -z "$MONGODB_ROOT_PASSWORD" ]; then
@@ -225,6 +225,7 @@ kubectl create configmap github-value-config \
   --from-literal=PORT="$APP_PORT" \
   --from-literal=BASE_URL="$BASE_URL" \
   --from-literal=GITHUB_APP_ID="$GITHUB_APP_ID" \
+  # --from-literal=NODE_HEAP_SIZE="8120" # Uncomment if needed, 4GB is the currrent default
   --namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
 # Show summary of created resources
@@ -284,7 +285,7 @@ else
                 --set app.image.tag=$APP_IMAGE_TAG \
                 --set service.targetPort=$APP_PORT"
     
-    # Helm action for child chart (MongoDB can be external or local)
+    # Helm action for child chart (MongoDB can be external or internal)
     if [ "$ACTION" == "install" ]; then
         if [ "$MONGODB_TYPE" == "external" ]; then
             helm install gvm-release "$TARGET_CHART_DIR" -f "$TEMP_VALUES_FILE" -n "$NAMESPACE" \

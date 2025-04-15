@@ -5,6 +5,7 @@ metadata:
   namespace: {SERVICE_NAMESPACE}
   annotations:
     cert-manager.io/cluster-issuer: {CERT_ISSUER}
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-User,X-Auth-Request-Email,X-Forwarded-User,X-Auth-Request-Groups"
     # Use simplest form of auth-url with port number
     nginx.ingress.kubernetes.io/auth-url: "http://oauth2-oauth2-proxy.{SERVICE_NAMESPACE}.svc.cluster.local/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://{DOMAIN}/oauth2/start?rd=https://$host$request_uri"
