@@ -224,7 +224,7 @@ echo "Creating ConfigMap with application configuration..."
 kubectl create configmap github-value-config \
   --from-literal=PORT="$APP_PORT" \
   --from-literal=BASE_URL="$BASE_URL" \
-  --from-literal=GITHUB_APP_ID="$GITHUB_APP_ID" \   # --from-literal=NODE_HEAP_SIZE="8120" # Uncomment if needed, 4GB is the currrent default
+  --from-literal=GITHUB_APP_ID="$GITHUB_APP_ID" \
   --namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
 # Show summary of created resources
